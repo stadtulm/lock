@@ -58,19 +58,11 @@ void setup() {
     ESP_LOGE(TAG, "error=\"error creating wifi queue\"");
   }
 
-  epaperQueue = xQueueCreate(3, sizeof(int));
-  if (epaperQueue == NULL) {
-    ESP_LOGE(TAG, "error=\"error creating epaper queue\"");
-  }
-
   ESP_LOGI(TAG, "msg=\"hello world\" version=0.0.2");
 
   // init spi before
   pinMode(PIN_SPI_LORA_SS, OUTPUT);
   digitalWrite(PIN_SPI_LORA_SS, HIGH);
-
-  pinMode(PIN_SPI_EPAPER_SS, OUTPUT);
-  digitalWrite(PIN_SPI_EPAPER_SS, HIGH);
 
   pinMode(PIN_SPI_MOSI, OUTPUT);
   SPI.begin(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, 0x00);
@@ -107,17 +99,10 @@ void setup() {
               NULL,       // parameter of the task
               1,          // priority of the task
               NULL);
-  xTaskCreate(epaper_task,   // Task function.
-              "epaper_task", // name of task.
-              10000,         // Stack size of task
-              NULL,          // parameter of the task
-              1,             // priority of the task
-              NULL);
 
   xQueueSend(taskQueue, &TASK_SEND_LOCK_STATUS, portMAX_DELAY);
   xQueueSend(taskQueue, &TASK_SEND_LOCATION_WIFI, portMAX_DELAY);
   xQueueSend(taskQueue, &TASK_SEND_LOCATION_GPS, portMAX_DELAY);
-  xQueueSend(epaperQueue, &EPAPER_SCREEN_LOGO, portMAX_DELAY);
 
   // TODO: remove periodicTask. currently only there for debugging
   ostime_t nextAt = os_getTime() + sec2osticks(5 * 60);

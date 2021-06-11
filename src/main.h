@@ -11,7 +11,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "button.h"
-#include "epaper.h"
 #include "location.h"
 #include "lock.h"
 #include "lorawan.h"
