@@ -18,12 +18,12 @@ extern QueueHandle_t lockQueue;
 
 /* Exported macro ------------------------------------------------------------*/
 
-#define PIN_LOCK_MOTOR GPIO_NUM_13
+#define PIN_LOCK_MOTOR GPIO_NUM_4
 // rotation switch: (PULLUP!) LOW: default, HIGH: motor presses against
 // (rotation complete)
-#define PIN_LOCK_ROTATION_SWITCH GPIO_NUM_2
+#define PIN_LOCK_ROTATION_SWITCH GPIO_NUM_39
 // latch switch: (PULLUP!) LOW: closed, HIGH: open
-#define PIN_LOCK_LATCH_SWITCH GPIO_NUM_4
+#define PIN_LOCK_LATCH_SWITCH GPIO_NUM_36
 #define PIN_LOCK_LATCH_SWITCH_SEL GPIO_SEL_4
 
 /* Exported functions ------------------------------------------------------- */
