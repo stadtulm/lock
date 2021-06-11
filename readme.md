@@ -1,4 +1,4 @@
-OpenBike Lock PCB Firmware
+OpenBike Lock PCB Firmware (Work in Progress)
 =================
 
 Derived from [radforschung/lock](https://github.com/radforschung/lock).
