@@ -81,6 +81,8 @@ void gps_task(void *ignore) {
     }
     ESP_LOGD(TAG, "task=gps_task state=active");
 
+    use_vext();
+
     long now = millis();
     do {
       while (Serial2.available() > 0) {
@@ -139,6 +141,8 @@ void gps_task(void *ignore) {
     }
     ESP_LOGD(TAG, "chars=%i passed=%i", gps.charsProcessed(),
              gps.passedChecksum());
+
+    use_vext_end();
 
     // FIXME: send queue: message
     loraSend(LORA_PORT_LOCATION_GPS, message.data(), message.size());

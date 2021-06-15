@@ -67,6 +67,9 @@ void setup() {
   pinMode(PIN_SPI_MOSI, OUTPUT);
   SPI.begin(PIN_SPI_SCK, PIN_SPI_MISO, PIN_SPI_MOSI, 0x00);
 
+  pinMode(VEXT_ON_PIN, OUTPUT);
+  digitalWrite(VEXT_ON_PIN, HIGH);
+
   xTaskCreatePinnedToCore(lorawan_loop,            // Task function.
                           "loraloop",              // name of task.
                           2048,                    // Stack size of task

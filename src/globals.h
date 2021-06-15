@@ -11,6 +11,8 @@
       hal_ticks(), pathToFileName(__FILE__), __LINE__, __FUNCTION__
 #endif
 
+#define VEXT_ON_PIN 25
+
 #include "lorawan.h"
 
 extern QueueHandle_t wifiQueue;

@@ -1,5 +1,5 @@
-#include "globals.h"
 #include "lock.h"
+#include "globals.h"
 
 static const char *TAG = "lock";
 
@@ -58,6 +58,14 @@ static void IRAM_ATTR lock_isr_handler(void *args) {
   xQueueSendToBackFromISR(lockQueue, &LOCK_TASK_GPIO_ISR, NULL);
 }
 
+void enable_latch_switch_isr() {
+  gpio_isr_handler_add(PIN_LOCK_LATCH_SWITCH, lock_isr_handler, NULL);
+}
+
+void disable_latch_switch_isr() {
+  gpio_isr_handler_remove(PIN_LOCK_LATCH_SWITCH);
+}
+
 void lock_task(void *ignore) {
   ESP_LOGD(TAG, "task=lock_task state=enter");
   Lock lock = Lock();
@@ -71,8 +79,12 @@ void lock_task(void *ignore) {
   gpioConfig.pull_down_en = GPIO_PULLDOWN_DISABLE;
   gpioConfig.intr_type = GPIO_INTR_ANYEDGE;
   gpio_config(&gpioConfig);
-
   gpio_install_isr_service(0);
+
+  // When Vext is disabled, ISR must be disabled as well!
+  vext_on_enable_callback = &enable_latch_switch_isr;
+  vext_on_disable_callback = &disable_latch_switch_isr;
+
   gpio_isr_handler_add(PIN_LOCK_LATCH_SWITCH, lock_isr_handler, NULL);
 
   boolean lastState = false;
@@ -83,7 +95,10 @@ void lock_task(void *ignore) {
     if (xQueueReceive(lockQueue, &task, portMAX_DELAY) != pdTRUE) {
       continue;
     }
+
     ESP_LOGD(TAG, "task=lock_task state=active");
+
+    use_vext();
 
     if (task == LOCK_TASK_GPIO_ISR) {
       bool open = digitalRead(PIN_LOCK_LATCH_SWITCH);
@@ -97,8 +112,6 @@ void lock_task(void *ignore) {
       lastState = open;
 
       xQueueSendToFront(lockQueue, &LOCK_TASK_PARK, portMAX_DELAY);
-
-      gpio_isr_handler_add(PIN_LOCK_LATCH_SWITCH, lock_isr_handler, NULL);
     } else if (task == LOCK_TASK_PARK) {
       ESP_LOGD(TAG, "task=lock_task action=park");
       if (!lock.motorIsParked()) {
@@ -112,8 +125,13 @@ void lock_task(void *ignore) {
       uint8_t msg[] = {0x01, (uint8_t)((!lock.isOpen()) ? 0x01 : 0x02)};
       loraSend(LORA_PORT_LOCK_STATUS, msg, sizeof(msg));
     }
+
+    use_vext_end();
+
+    ESP_LOGD(TAG, "task=lock_task state=idle");
+
     task = 0;
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
   }
   vTaskDelete(NULL);
 }

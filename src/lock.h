@@ -11,6 +11,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <Bounce2.h>
+#include "power.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -24,7 +25,7 @@ extern QueueHandle_t lockQueue;
 #define PIN_LOCK_ROTATION_SWITCH GPIO_NUM_39
 // latch switch: (PULLUP!) LOW: closed, HIGH: open
 #define PIN_LOCK_LATCH_SWITCH GPIO_NUM_36
-#define PIN_LOCK_LATCH_SWITCH_SEL GPIO_SEL_4
+#define PIN_LOCK_LATCH_SWITCH_SEL GPIO_SEL_36
 
 /* Exported functions ------------------------------------------------------- */
 class Lock {
