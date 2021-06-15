@@ -72,7 +72,7 @@ void setup() {
 
   xTaskCreatePinnedToCore(lorawan_loop,            // Task function.
                           "loraloop",              // name of task.
-                          2048,                    // Stack size of task
+                          10000,                    // Stack size of task
                           (void *)1,               // parameter of the task
                           (5 | portPRIVILEGE_BIT), // priority of the task
                           NULL,                    // constpvCreatedTask
